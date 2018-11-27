@@ -34,7 +34,7 @@ div.tooltip {
 
 <html>
 	<head>
-		<title>Deprivation, Alcohol Misuse, and Mental Health</title>
+		<title>Deprivation and Alcohol Abuse</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -42,7 +42,7 @@ div.tooltip {
 	<body>
 		<!-- Header -->
 			<header id="header">
-				<a href="index.html" class="logo"><strong>NHS Mental Health Outcomes</strong> correlated with Deprivation and Alcohol Abuse</a>
+				<a href="index.html" class="logo"><strong>Alcohol Abuse</strong> correlated with Deprivation </a>
 			</header>
 
 
@@ -55,6 +55,13 @@ div.tooltip {
 					<header>
 						<h2><a href="index.html">Where we live affects our health</a></h2>
 					</header>
+
+                        <ul class="actions small">
+                            <li><a href="" id="deprivationButton" onclick="drawMap('deprivation')" class="button small">Deprivation</a></li>
+                            <li><a href="" id="alcoholButton" onclick="drawMap('alcohol')" class="button alt small">Alcohol Abuse</a></li>
+                            <li><a href="" id="bothButton" onclick="drawMap('both')" class="button alt small">Both</a></li>
+                        </ul>
+
 					<p>Some well thought out copy abut why the correlations we are presenting matter, citing some recent statistics. </p>
 
                     <p>
@@ -157,9 +164,27 @@ function drawMap(type){
         .on("click",clicked);
 
     });
+
+    if(type.length > 0){
+        if(type == "alcohol"){
+            document.getElementById("alcoholButton").className="button small"
+            document.getElementById("deprivationButton").className="button alt small"
+            document.getElementById("bothButton").className="button alt small"
+        }
+        if(type == "deprivation"){
+            document.getElementById("alcoholButton").className="button alt small"
+            document.getElementById("deprivationButton").className="button small"
+            document.getElementById("bothButton").className="button alt small"
+        }
+        if(type == "both"){
+            document.getElementById("alcoholButton").className="button alt small"
+            document.getElementById("deprivationButton").className="button alt small"
+            document.getElementById("bothButton").className="button small"
+        }
+    }
 }
 
-drawMap();
+drawMap("");
 
 
 // Add optional onClick events for features here
