@@ -61,7 +61,7 @@ div.tooltip {
 
                     <p><i>(A nice bar chart illuminating some more helpful information.)</i></p>
 					<ul class="actions">
-						<li><a href="generic.html" class="button alt">Learn More</a></li>
+						<li><a href="" class="button alt" onclick="drawMap()">Learn More</a></li>
 					</ul>
 				</div>
 			</div>
@@ -139,7 +139,7 @@ svg.call(zoom);
 //Create a tooltip, hidden at the start
 var tooltip = d3.select("body").append("div").attr("class","tooltip");
 
-function drawMap(){
+function drawMap(type){
     d3.json("https://raw.githubusercontent.com/2193433B/HCImap/master/topo_spc.topojson",function(error,geodata) {
       if (error) return console.log(error); //unknown error, check the console
 
@@ -200,11 +200,12 @@ function hideTooltip() {
 
 function colorByCouncilArea(councilArea){
     console.log(councilArea)
-    // var letters = '0123456789ABCDEF';
-    var color = '#5544' + councilArea.slice(-2);
-    // for (var i = 0; i < 6; i++) {
-    //   color += letters[Math.floor(Math.random() * 16)];
-    // }
+    var letters = '0123456789ABCDEF';
+    // var color = '#5544' + councilArea.slice(-2);
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
     svg.call(zoom);
     return color;
 }
