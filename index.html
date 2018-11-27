@@ -115,6 +115,7 @@ div.tooltip {
 <script>
 
 var simdData;
+var alcoholData;
 
 var width = 600;
 var height = 600;
@@ -133,6 +134,9 @@ function buildMap(type){
       dataLoaded(data, type);
     });
 
+    d3.csv("https://raw.githubusercontent.com/2193433B/HCImap/master/alcohol_data.csv", function(data){
+        alcoholLoaded(data, type);
+    });
     //Map projection
     projection = d3.geo.mercator()
         .scale(2790.313683684819)
@@ -257,6 +261,10 @@ function dataLoaded(data, type){
     drawMap(type);
 }
 
+function alcoholLoaded(data, type){
+    alcoholData = data;
+    drawMap(type);
+}
 
 // Add optional onClick events for features here
 // d.properties contains the attributes (e.g. d.properties.name, d.properties.population)
@@ -269,7 +277,7 @@ function clicked(d,i) {
 
 //Update map on zoom/pan
 function zoomed() {
-  features.attr("transform", "translate(" + zoom.translate() + ")scale(" + zoom.scale() + ")")
+  features.attr("transform", "translate(" + zoom.translate() + ")scalehttps://raw.githubusercontent.com/2193433B/HCImap/master/alcohol_data.csv(" + zoom.scale() + ")")
       .selectAll("path").style("stroke-width", 1 / zoom.scale() + "px" );
 }
 
@@ -309,19 +317,31 @@ function getSIMDstat(target){
 }
 
 
+function getAlcoholstat(target){
+    for(i in alcoholData){
+        if(alcoholData[i]["Council Area"] === target){
+            console.log("Valid return, alcohol");
+            return alcoholData[i]["NumberOfPatients"];
+        }
+    }
+}
+
 function colorByCouncilArea(councilArea, visType){
-    var stat = getSIMDstat(councilArea);
+    var stat;
     var color;
 
     if(visType == "alcohol"){
+        stat = getAlcoholstat(councilArea);
         color = d3.lab(stat * 100, -100, -100);
     }
 
     if(visType == "deprivation"){
+        stat = getSIMDstat(councilArea);
         color = d3.lab(stat * 100, 100, 100);
     }
 
     if(visType == "both"){
+        stat = (getSIMDstat(councilArea) + getAlcoholstat(councilArea))/2;
         color = d3.lab(stat * 100, 50, -50);
     }
 
