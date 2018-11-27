@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
-<style>
 
+<style>
 body {
   font: 12px sans-serif;
   background: black;
@@ -57,9 +57,9 @@ div.tooltip {
 					</header>
 
                         <ul class="actions small">
-                            <li><a href="" id="deprivationButton" onclick="drawMap('deprivation')" class="button small">Deprivation</a></li>
-                            <li><a href="" id="alcoholButton" onclick="drawMap('alcohol')" class="button alt small">Alcohol Abuse</a></li>
-                            <li><a href="" id="bothButton" onclick="drawMap('both')" class="button alt small">Both</a></li>
+                            <li><a id="deprivationButton" onclick="drawMap('deprivation')" class="button small">Deprivation</a></li>
+                            <li><a id="alcoholButton" onclick="drawMap('alcohol')" class="button alt small">Alcohol Abuse</a></li>
+                            <li><a id="bothButton" onclick="drawMap('both')" class="button alt small">Both</a></li>
                         </ul>
 
 					<p>Some well thought out copy abut why the correlations we are presenting matter, citing some recent statistics. </p>
@@ -125,9 +125,6 @@ d3.select("#viz_one")
    //class to make it responsive
    .classed("svg-content-responsive", true);
 
-   d3.csv("/data/cities.csv", function(data) {
-     console.log(data[0]);
-   });
 
 //Create an SVG
 var svg = d3.select("#svg-sizer").append("svg")
@@ -226,16 +223,44 @@ function hideTooltip() {
   tooltip.style("display","none");
 }
 
-function colorByCouncilArea(councilArea){
-    console.log(councilArea)
-    var letters = '0123456789ABCDEF';
-    // var color = '#5544' + councilArea.slice(-2);
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
+function getSIMDstat(data, target){
+    for(i in data){
+        console.log(target);
+        console.log(data[i]["Council Area"]);
+        if(data[i]["Council Area"] === target){
+            console.log("Valid return");
+            return data[i]["SIMD2016Rank"];
+        }
     }
-    svg.call(zoom);
+    return 0;
+}
+
+function rgb2hex(rgb){
+ rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+ return (rgb && rgb.length === 4) ? "#" +
+  ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+  ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+  ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+}
+
+
+function colorByCouncilArea(councilArea){
+    var color;
+    d3.csv("https://raw.githubusercontent.com/2193433B/HCImap/master/simd_data.csv", function(data) {
+      simdData = data;
+      var stat = getSIMDstat(data, councilArea);
+      color = rgb2hex("rgba(255, 255, 255, "+ (stat * 255) + ")")
+    });
+
+    // var letters = '0123456789ABCDEF';
+    // // var color = '#5544' + councilArea.slice(-2);
+    // var color = '#';
+    // for (var i = 0; i < 6; i++) {
+    //   color += letters[Math.floor(Math.random() * 16)];
+    // }
+    // svg.call(zoom);
     return color;
+    return '#FFFFFF';
 }
 
 
