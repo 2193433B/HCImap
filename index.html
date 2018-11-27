@@ -1,0 +1,231 @@
+<!DOCTYPE HTML>
+<style>
+
+body {
+  font: 12px sans-serif;
+  background: black;
+}
+
+path {
+  stroke-width: 1px;
+  stroke: black;
+  /* fill: green; */
+  cursor: pointer;
+}
+
+
+path:hover, path.highlighted {
+  fill: lime;
+}
+
+div.tooltip {
+  position: absolute;
+  background-color: white;
+  border: 1px solid black;
+  color: black;
+  font-weight: bold;
+  padding: 4px 8px;
+  display: none;
+}
+
+</style>
+
+
+
+<html>
+	<head>
+		<title>Deprivation, Alcohol Misuse, and Mental Health</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+	</head>
+	<body>
+		<!-- Header -->
+			<header id="header">
+				<a href="index.html" class="logo"><strong>NHS Mental Health Outcomes</strong> correlated with Deprivation and Alcohol Abuse</a>
+			</header>
+
+
+		<article id="two" class="post invert style1 alt">
+			<div class="image">
+                <div id = "viz_one"></div>
+			</div>
+			<div class="content">
+				<div class="inner">
+					<header>
+						<h2><a href="index.html">Where we live affects our health</a></h2>
+					</header>
+					<p>Some well thought out copy abut why the correlations we are presenting matter, citing some recent statistics. </p>
+
+                    <p>
+
+                    <p><i>(A nice bar chart illuminating some more helpful information.)</i></p>
+					<ul class="actions">
+						<li><a href="generic.html" class="button alt">Learn More</a></li>
+					</ul>
+				</div>   .classed("svg-container", true) //container class to make it responsive
+   .append("svg")
+   .attr("id", "svg-sizer")
+   //responsive SVG needs these 2 attributes and no width and height attr
+   .attr("preserveAspectRatio", "xMinYMin meet")
+   .attr("viewBox", "0 0 600 600")
+   //class to make it responsive
+   .classed("svg-content-responsive", true);
+			</div>
+		</article>
+
+
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="copyright">
+
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+
+<!-- D3 DATA VISUALIZATION BELOW:-->   .classed("svg-container", true) //container class to make it responsive
+   .append("svg")
+   .attr("id", "svg-sizer")
+   //responsive SVG needs these 2 attributes and no width and height attr
+   .attr("preserveAspectRatio", "xMinYMin meet")
+   .attr("viewBox", "0 0 600 600")
+   //class to make it responsive
+   .classed("svg-content-responsive", true);
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+<script>
+
+// //Map dimensions (in pixels)
+// var width = window.innerWidth / 2,
+//     height = window.innerHeight /2;
+
+var width = 600;
+var height = 600;
+
+//Map projection
+var projection = d3.geo.mercator()
+    .scale(3209.437120273891)
+    .center([-5.207194460657638,57.09294435604778]) //projection center
+    .translate([width/2,height/2]) //translate to center the map in view
+
+//Generate paths based on projection
+var path = d3.geo.path()
+    .projection(projection);
+
+
+d3.select("#viz_one")
+   .append("div")
+   .classed("svg-container", true) //container class to make it responsive
+   .append("svg")
+   .attr("id", "svg-sizer")
+   //responsive SVG needs these 2 attributes and no width and height attr
+   .attr("preserveAspectRatio", "xMinYMin meet")
+   .attr("viewBox", "0 0 600 600")
+   //class to make it responsive
+   .classed("svg-content-responsive", true);
+
+
+//Create an SVG
+var svg = d3.select("#svg-sizer").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+//Group for the map features
+var features = svg.append("g")
+    .attr("class","features");
+
+//Create zoom/pan listener
+//Change [1,Infinity] to adjust the min/max zoom scale
+var zoom = d3.behavior.zoom()
+    .scaleExtent([1, 5])
+    .on("zoom",zoomed);
+
+svg.call(zoom);
+
+//Create a tooltip, hidden at the start
+var tooltip = d3.select("body").append("div").attr("class","tooltip");
+
+function drawMap(){
+    d3.json("https://raw.githubusercontent.com/2193433B/HCImap/master/topo_spc.topojson",function(error,geodata) {
+      if (error) return console.log(error); //unknown error, check the console
+
+      //Create a path for each map feature in the data
+      features.selectAll("path")
+        .data(topojson.feature(geodata,geodata.objects.spc).features) //generate features from TopoJSON
+        .enter()
+        .append("path")
+        .attr("d",path)
+        .attr("fill", function(cA){return colorByCouncilArea(cA.properties.CODE);})
+        .attr("opacity", 1)
+        .on("mouseover",showTooltip)
+        .on("mousemove",moveTooltip)
+        .on("mouseout",hideTooltip)
+        .on("click",clicked);
+
+    });
+}
+
+drawMap();
+
+
+// Add optional onClick events for features here
+// d.properties contains the attributes (e.g. d.properties.name, d.properties.population)
+function clicked(d,i) {
+
+}
+
+
+//Update map on zoom/pan
+function zoomed() {
+  features.attr("transform", "translate(" + zoom.translate() + ")scale(" + zoom.scale() + ")")
+      .selectAll("path").style("stroke-width", 1 / zoom.scale() + "px" );
+}
+
+
+//Position of the tooltip relative to the cursor
+var tooltipOffset = {x: 5, y: -25};
+
+//Create a tooltip, hidden at the start
+function showTooltip(d) {
+  moveTooltip();
+
+  tooltip.style("display","block")
+      .text(d.properties.NAME + "\n" + d.properties.CODE);
+}
+
+//Move the tooltip to track the mouse
+function moveTooltip() {
+  tooltip.style("top",(d3.event.pageY+tooltipOffset.y)+"px")
+      .style("left",(d3.event.pageX+tooltipOffset.x)+"px");
+}
+
+//Create a tooltip, hidden at the start
+function hideTooltip() {
+  tooltip.style("display","none");
+}
+
+function colorByCouncilArea(councilArea){
+    console.log(councilArea)
+    // var letters = '0123456789ABCDEF';
+    var color = '#5544' + councilArea.slice(-2);
+    // for (var i = 0; i < 6; i++) {
+    //   color += letters[Math.floor(Math.random() * 16)];
+    // }
+    svg.call(zoom);
+    return color;
+}
+
+
+
+</script>
+
+	</body>
+</html>
