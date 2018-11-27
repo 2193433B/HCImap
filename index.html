@@ -125,6 +125,9 @@ d3.select("#viz_one")
    //class to make it responsive
    .classed("svg-content-responsive", true);
 
+   d3.csv("/data/cities.csv", function(data) {
+     console.log(data[0]);
+   });
 
 //Create an SVG
 var svg = d3.select("#svg-sizer").append("svg")
