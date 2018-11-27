@@ -11,11 +11,13 @@ path {
   stroke: black;
   /* fill: green; */
   cursor: pointer;
+  opacity: 0.8;
 }
 
 
 path:hover, path.highlighted {
-  fill: lime;
+    stroke-width: 1.5px;
+    opacity: 1;
 }
 
 div.tooltip {
@@ -57,9 +59,9 @@ div.tooltip {
 					</header>
 
                         <ul class="actions small">
-                            <li><a id="deprivationButton" onclick="drawMap('deprivation')" class="button small">Deprivation</a></li>
-                            <li><a id="alcoholButton" onclick="drawMap('alcohol')" class="button alt small">Alcohol Abuse</a></li>
-                            <li><a id="bothButton" onclick="drawMap('both')" class="button alt small">Both</a></li>
+                            <li><a id="deprivationButton" onclick="buildMap('deprivation')" class="button small">Deprivation</a></li>
+                            <li><a id="alcoholButton" onclick="buildMap('alcohol')" class="button alt small">Alcohol Abuse</a></li>
+                            <li><a id="bothButton" onclick="buildMap('both')" class="button alt small">Both</a></li>
                         </ul>
 
 					<p>Some well thought out copy abut why the correlations we are presenting matter, citing some recent statistics. </p>
@@ -94,70 +96,90 @@ div.tooltip {
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/topojson.v1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-color/1.2.1/d3-color.min.js"></script>
 <script>
 
-// //Map dimensions (in pixels)
-// var width = window.innerWidth / 2,
-//     height = window.innerHeight /2;
+var simdData;
 
 var width = 600;
 var height = 600;
 
-//Map projection
-var projection = d3.geo.mercator()
-    .scale(3209.437120273891)
-    .center([-5.207194460657638,57.09294435604778]) //projection center
-    .translate([width/2,height/2]) //translate to center the map in view
+var svg;
+var features;
+var zoom;
+var projection;
+var path;
 
-//Generate paths based on projection
-var path = d3.geo.path()
-    .projection(projection);
+function buildMap(type){
+
+    d3.select("#viz_one").html("");
+
+    d3.csv("https://raw.githubusercontent.com/2193433B/HCImap/master/simd_data.csv", function(data) {
+      dataLoaded(data, type);
+    });
+
+    //Map projection
+    projection = d3.geo.mercator()
+        .scale(2790.313683684819)
+        .center([-4.687308351132869,57.88149740071447]) //projection center
+        .translate([width/2,height/2]) //translate to center the map in view
+
+    //Generate paths based on projection
+    path = d3.geo.path()
+        .projection(projection);
 
 
-d3.select("#viz_one")
-   .append("div")
-   .classed("svg-container", true) //container class to make it responsive
-   .append("svg")
-   .attr("id", "svg-sizer")
-   //responsive SVG needs these 2 attributes and no width and height attr
-   .attr("preserveAspectRatio", "xMinYMin meet")
-   .attr("viewBox", "0 0 600 600")
-   //class to make it responsive
-   .classed("svg-content-responsive", true);
+    d3.select("#viz_one")
+       .append("div")
+       .classed("svg-container", true) //container class to make it responsive
+       .append("svg")
+       .attr("id", "svg-sizer")
+       //responsive SVG needs these 2 attributes and no width and height attr
+       .attr("preserveAspectRatio", "xMinYMin meet")
+       .attr("viewBox", "0 0 600 600")
+       //class to make it responsive
+       .classed("svg-content-responsive", true);
 
 
-//Create an SVG
-var svg = d3.select("#svg-sizer").append("svg")
-    .attr("width", width)
-    .attr("height", height);
+    //Create an SVG
+    svg = d3.select("#svg-sizer").append("svg")
+        .attr("width", width)
+        .attr("height", height);
 
-//Group for the map features
-var features = svg.append("g")
-    .attr("class","features");
+    //Group for the map features
+    features = svg.append("g")
+        .attr("class","features");
 
-//Create zoom/pan listener
-//Change [1,Infinity] to adjust the min/max zoom scale
-var zoom = d3.behavior.zoom()
-    .scaleExtent([1, 5])
-    .on("zoom",zoomed);
+    //Create zoom/pan listener
+    //Change [1,Infinity] to adjust the min/max zoom scale
+    zoom = d3.behavior.zoom()
+        .scaleExtent([1, 5])
+        .on("zoom",zoomed);
 
-svg.call(zoom);
+    svg.call(zoom);
+}
+
+
+
+
+
+
+
 
 //Create a tooltip, hidden at the start
 var tooltip = d3.select("body").append("div").attr("class","tooltip");
 
 function drawMap(type){
-    d3.json("https://raw.githubusercontent.com/2193433B/HCImap/master/topo_spc.topojson",function(error,geodata) {
+    d3.json("https://raw.githubusercontent.com/2193433B/HCImap/master/topo_corrected.topojson",function(error,geodata) {
       if (error) return console.log(error); //unknown error, check the console
 
-      //Create a path for each map feature in the data
       features.selectAll("path")
-        .data(topojson.feature(geodata,geodata.objects.spc).features) //generate features from TopoJSON
+        .data(topojson.feature(geodata,geodata.objects.lad).features) //generate features from TopoJSON
         .enter()
         .append("path")
         .attr("d",path)
-        .attr("fill", function(cA){return colorByCouncilArea(cA.properties.CODE);})
         .attr("opacity", 1)
+        .attr("fill", function(cA){return colorByCouncilArea(cA.properties.LAD13CD, type);})
         .on("mouseover",showTooltip)
         .on("mousemove",moveTooltip)
         .on("mouseout",hideTooltip)
@@ -165,26 +187,30 @@ function drawMap(type){
 
     });
 
-    if(type.length > 0){
-        if(type == "alcohol"){
-            document.getElementById("alcoholButton").className="button small"
-            document.getElementById("deprivationButton").className="button alt small"
-            document.getElementById("bothButton").className="button alt small"
-        }
-        if(type == "deprivation"){
-            document.getElementById("alcoholButton").className="button alt small"
-            document.getElementById("deprivationButton").className="button small"
-            document.getElementById("bothButton").className="button alt small"
-        }
-        if(type == "both"){
-            document.getElementById("alcoholButton").className="button alt small"
-            document.getElementById("deprivationButton").className="button alt small"
-            document.getElementById("bothButton").className="button small"
-        }
+    if(type == "alcohol"){
+        document.getElementById("alcoholButton").className="button small"
+        document.getElementById("deprivationButton").className="button alt small"
+        document.getElementById("bothButton").className="button alt small"
     }
+    if(type == "deprivation"){
+        document.getElementById("alcoholButton").className="button alt small"
+        document.getElementById("deprivationButton").className="button small"
+        document.getElementById("bothButton").className="button alt small"
+    }
+    if(type == "both"){
+        document.getElementById("alcoholButton").className="button alt small"
+        document.getElementById("deprivationButton").className="button alt small"
+        document.getElementById("bothButton").className="button small"
+    }
+
 }
 
-drawMap("");
+buildMap("deprivation");
+
+function dataLoaded(data, type){
+    simdData = data;
+    drawMap(type);
+}
 
 
 // Add optional onClick events for features here
@@ -209,7 +235,7 @@ function showTooltip(d) {
   moveTooltip();
 
   tooltip.style("display","block")
-      .text(d.properties.NAME + "\n" + d.properties.CODE);
+      .text(d.properties.LAD13NM + "\n" + d.properties.LAD13CD);
 }
 
 //Move the tooltip to track the mouse
@@ -223,44 +249,37 @@ function hideTooltip() {
   tooltip.style("display","none");
 }
 
-function getSIMDstat(data, target){
-    for(i in data){
-        console.log(target);
-        console.log(data[i]["Council Area"]);
-        if(data[i]["Council Area"] === target){
+function getSIMDstat(target){
+    for(i in simdData){
+        // console.log("t" + target);
+        // console.log(data[i]["Council Area"]);
+        if(simdData[i]["Council Area"] === target){
             console.log("Valid return");
-            return data[i]["SIMD2016Rank"];
+            return simdData[i]["SIMD2016Rank"];
         }
     }
     return 0;
 }
 
-function rgb2hex(rgb){
- rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
- return (rgb && rgb.length === 4) ? "#" +
-  ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
-  ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
-  ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
-}
 
-
-function colorByCouncilArea(councilArea){
+function colorByCouncilArea(councilArea, visType){
+    var stat = getSIMDstat(councilArea);
     var color;
-    d3.csv("https://raw.githubusercontent.com/2193433B/HCImap/master/simd_data.csv", function(data) {
-      simdData = data;
-      var stat = getSIMDstat(data, councilArea);
-      color = rgb2hex("rgba(255, 255, 255, "+ (stat * 255) + ")")
-    });
 
-    // var letters = '0123456789ABCDEF';
-    // // var color = '#5544' + councilArea.slice(-2);
-    // var color = '#';
-    // for (var i = 0; i < 6; i++) {
-    //   color += letters[Math.floor(Math.random() * 16)];
-    // }
-    // svg.call(zoom);
-    return color;
-    return '#FFFFFF';
+    if(visType == "alcohol"){
+        color = d3.lab(stat * 100, -100, -100);
+    }
+
+    if(visType == "deprivation"){
+        color = d3.lab(stat * 100, 100, 100);
+    }
+
+    if(visType == "both"){
+        color = d3.lab(stat * 100, 50, -50);
+    }
+
+    return color + "";
+
 }
 
 
