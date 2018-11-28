@@ -210,10 +210,7 @@ function displayDetail(data, councilArea){
              var translate = [barWidth * i, 0];
              return "translate("+ translate +")";
 
-        })
-        .append("text")
-        .enter()
-        .text( function (d) { return "( " + ", " +" )"; });
+        });
 
 }
 
@@ -225,14 +222,14 @@ function zoomed() {
 
 
 //Position of the tooltip relative to the cursor
-var tooltipOffset = {x: 5, y: -25};
+var tooltipOffset = {x: 15, y: -25};
 
 //Create a tooltip, hidden at the start
 function showTooltip(d) {
   moveTooltip();
 
   tooltip.style("display","block")
-      .text(d.properties.LAD13NM + "\n" + d.properties.LAD13CD);
+      .text(d.properties.LAD13NM);
 }
 
 //Move the tooltip to track the mouse
