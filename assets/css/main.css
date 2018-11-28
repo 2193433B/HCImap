@@ -3,7 +3,28 @@
 @import url("https://fonts.googleapis.com/css?family=Lato:300,700,300italic,700italic");
 
 
-
+.axis path, .axis line {
+    fill: none;
+    stroke: #fff;
+  }
+.axis text {
+  	font-size: 13px;
+  }
+.bar {
+    fill: #8CD3DD;
+  }
+.bar:hover {
+    fill: #F56C4E;
+  }
+svg text.label {
+  fill:white;
+  font: 15px;
+  font-weight: 400;
+  text-anchor: middle;
+}
+#chartID {
+	min-width: 531px;
+}
 
 .svg-container {
     display: inline-block;
@@ -20,6 +41,42 @@
     left: 0;
 }
 
+body {
+  font: 12px sans-serif;
+  background: black;
+}
+
+html{
+    scroll-behavior: smooth;
+}
+
+path {
+  stroke-width: 1px;
+  stroke: black;
+  /* fill: green; */
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.bar-chart {
+    background-color: #000;
+}
+
+
+path:hover, path.highlighted {
+    stroke-width: 1.5px;
+    opacity: 1;
+}
+
+div.tooltip {
+  position: absolute;
+  background-color: white;
+  border: 1px solid black;
+  color: black;
+  font-weight: bold;
+  padding: 4px 8px;
+  display: none;
+}
 
 
 
