@@ -35,7 +35,7 @@
 
                     <div id = "alcohol_info">
                         <ul class="actions small">
-                            <p> Intro to the alcohol section </p>
+                            <p> Averaged rates of alcohol abuse per capita, described by alcoholic inpatient hospital records from <u><a href="https://www.opendata.nhs.scot/dataset/alcohol-related-hospital-statistics-scotland"> the NHS opendata scheme</a></u> in 2018.  </p>
                         </ul>
 
                         <ul class="actions small">
@@ -46,7 +46,7 @@
 
                     <div id = "deprivation_info">
                         <ul class="actions small">
-                            <p> Intro to the deprivation section </p>
+                            <p> Levels of deprivation by area, as described by <u><a href ="https://www.opendata.nhs.scot/dataset/scottish-index-of-multiple-deprivation"> the Scottish Index of Multiple Deprivation</a></u> in 2016. </p>
                         </ul>
 
                         <ul class="actions small">
@@ -57,7 +57,7 @@
 
                     <div id = "both_info">
                         <ul class="actions small">
-                            <p> Intro to the both section </p>
+                            <p> Levels of correlation between deprivation and likelihood of alcohol abuse, by area. </p>
                         </ul>
 
                         <ul class="actions small">
@@ -68,14 +68,12 @@
 
 
 
-					<p>Some well thought out copy abut why the correlations we are presenting matter, citing some recent statistics. </p>
 
                     <div class="image">
                     </div>
 
-                    <p><i>(A nice bar chart illuminating some more helpful information.)</i></p>
 					<ul class="actions">
-						<li><a href="" class="button alt" onclick="drawMap()">Learn More</a></li>
+						<li><a href="https://www.alcohol-focus-scotland.org.uk/news/poverty-linked-to-increased-harm-from-alcohol/" class="button alt" >Learn More</a></li>
 					</ul>
 				</div>
 			</div>
@@ -83,17 +81,41 @@
 
 
     <article id="bottom_info" class="post invert style1 alt">
+        <div class="container">
+  <div class="row">
+    <div class="12u">
         <div class="content">
         <div class="inner">
 			<header>
 				<h2 id = "info_Name"></h2>
+                <h1>&nbsp;</h1>
+                <h1>&nbsp;</h1>
+
                     <svg id = "viz_two"></svg>
+			</header>
+
+			<h3>&emsp; Cirrhosis &emsp; &emsp;Unspecified &emsp; &emsp; &emsp;   ALD &emsp; &nbsp;&nbsp;&nbsp; &emsp; Acute Intox. &emsp;&nbsp;   Dependence &emsp;  Harmful Use &emsp;  Withdrawal</h3>
+
+		</div>
+    </div>
+    </div>
+    <div class="7u (medium)">
+        <div class="content">
+        <div class="inner">
+			<header>
+				<div id="detail_title"></div>
+
+                <p id ="detail"> </p>
 			</header>
 
 			<p></p>
 
 		</div>
     </div>
+    </div>
+  </div>
+</div>
+
     </article>
 
 		<!-- Scripts -->
@@ -109,5 +131,4 @@
 <script src="vis_scripts/d3.v3.min.js"></script>
 <script src="vis_scripts/topojson.v1.min.js"></script>
 <script src="vis_scripts/d3-color.min.js"></script>
-<!-- <script src="https://raw.githubusercontent.com/2193433B/HCImap/master/vis.js"></script> -->
 <script type="text/javascript" src="vis_scripts/vis.js"></script>

@@ -149,7 +149,7 @@ function alcoholLoaded(data, type){
 function clicked(d,i) {
 
     console.log(d.properties.LAD13NM);
-    document.getElementById("info_Name").innerHTML="The " + d.properties.LAD13NM + " Area";
+    document.getElementById("info_Name").innerHTML="Proportions of cases in The " + d.properties.LAD13NM + " Area";
     window.scrollBy(0, 2000);
 
     d3.select("#viz_two").html("");
@@ -173,21 +173,24 @@ function displayDetail(data, councilArea){
         }
     }
 
-    for (i = startIndex; i < (+startIndex+8); i++) {
+    for (i = startIndex; i < (+startIndex+7); i++) {
         // console.log(data[i]["Number of Patients"]);
         dataset.push(data[i]["Number of Patients"]);
     }
 
+
+    document.getElementById("detail_title").innerHTML = "";
+
     console.log("Start index = " + startIndex);
 
-    var svgWidth = 500;
-    var svgHeight = 300;
+    var svgWidth = 1400;
+    var svgHeight = 400;
     var bars_svg = d3.select('#viz_two')
         .attr("width", svgWidth)
         .attr("height", svgHeight)
         .attr("class", "bar-chart");
 
-    var barPadding = 5;
+    var barPadding = 35;
     var barWidth = (svgWidth / dataset.length);
     var barChart = bars_svg.selectAll("viz_two")
         .data(dataset)
@@ -205,8 +208,10 @@ function displayDetail(data, councilArea){
              var translate = [barWidth * i, 0];
              return "translate("+ translate +")";
 
-        });
-
+        })
+        .append("text")
+        .enter()
+        .text( function (d) { return "( " + ", " +" )"; });
 
 }
 
