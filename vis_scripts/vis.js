@@ -163,6 +163,8 @@ function clicked(d,i) {
 
 function displayDetail(data, councilArea){
 
+    document.getElementById("labels").style.display = 'block';
+
     var dataset = [];
 
     var startIndex = -1;
@@ -184,7 +186,7 @@ function displayDetail(data, councilArea){
     console.log("Start index = " + startIndex);
 
     var svgWidth = 1400;
-    var svgHeight = 400;
+    var svgHeight = 300;
     var bars_svg = d3.select('#viz_two')
         .attr("width", svgWidth)
         .attr("height", svgHeight)
@@ -251,7 +253,7 @@ function getSIMDstat(target){
         }
     }
     return 0;
-}
+}Area
 
 
 function getAlcoholstat(target){
